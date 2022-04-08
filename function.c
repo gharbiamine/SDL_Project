@@ -58,7 +58,7 @@ void move(Enemy *e)
 int collisionBB(SDL_Rect posp, SDL_Rect pos)
 {
     int flag = 1;
-    if ((posp.x + posp.y < pos.x) || (posp.x > pos.x + pos.y) || (posp.y + posp.h < pos.y) || (posp.y > pos.y + pos.h))
+    if ((abs(pos.x - posp.x) <= ((pos.w + posp.w) / 2)) && (abs(pos.y - posp.y) <= ((pos.h + posp.h) / 2)))
     {
         flag = 0;
     }
@@ -108,7 +108,7 @@ void NewGame(SDL_Surface *screen)
 {
     SDL_Surface *NGame = NULL;
 
-    SDL_Rect positionNGame;
+    SDL_Rect positionNGame, posRect = initSDL_Rect(0, 0, 108, 100), collisionTestBox = initSDL_Rect(100, 500, 108, 100);
 
     SDL_Event event;
     Enemy e;
@@ -123,13 +123,21 @@ void NewGame(SDL_Surface *screen)
 
     positionNGame.x = 0;
     positionNGame.y = 0;
-    while (done)
+
+    int flag = 1;
+    while (done && flag)
     {
         SDL_BlitSurface(NGame, NULL, screen, &positionNGame);
         afficherEnemy(&e, screen);
+        SDL_BlitSurface(e.spriteSheet, &posRect, screen, &collisionTestBox);
         animerEnemy(&e);
         move(&e);
         SDL_Flip(screen);
+        flag = collisionBB(e.posScreen, collisionTestBox);
+        if (flag == 0)
+        {
+            exit(1);
+        }
         while (SDL_PollEvent(&event))
         {
             switch (event.type)
