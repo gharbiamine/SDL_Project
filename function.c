@@ -136,7 +136,7 @@ void NewGame(SDL_Surface *screen)
         flag = collisionBB(e.posScreen, collisionTestBox);
         if (flag == 0)
         {
-            exit(1);
+            printf("Collision\n");
         }
         while (SDL_PollEvent(&event))
         {
